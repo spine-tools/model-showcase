@@ -1,0 +1,31 @@
+{
+    "Tool": {
+        "Run SpineOpt": {
+            "execution_settings": {}
+        },
+        "Load template": {
+            "execution_settings": {}
+        },
+        "Run SpineOpt detached": {
+            "execution_settings": {}
+        },
+        "RunSpineOpt": {
+            "execution_settings": {
+                "kernel_spec_name": "",
+                "env": "",
+                "use_jupyter_console": false,
+                "executable": "",
+                "project": ""
+            }
+        },
+        "Upgrade SpineOpt DB": {
+            "execution_settings": {
+                "kernel_spec_name": "",
+                "env": "",
+                "use_jupyter_console": false,
+                "executable": "C:\\Julia\\Julia-1.12.1\\bin\\julia.exe",
+                "project": "C:\\Workspace\\Spine\\SpineOpt\\v1"
+            }
+        }
+    }
+}

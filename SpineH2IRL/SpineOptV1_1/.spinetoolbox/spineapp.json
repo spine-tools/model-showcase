@@ -1,0 +1,285 @@
+{
+    "fast_rules": {
+        "declare": {
+            "spineopt_output_translation": {
+                "action": "translate",
+                "parameter": {
+                    "unit_flow": {
+                        "selector": "direction",
+                        "new_name": {
+                            "to_node": "production",
+                            "from_node": "consumption"
+                        }
+                    },
+                    "connection_flow": {
+                        "selector": "direction",
+                        "new_name": {
+                            "to_node": "imports",
+                            "from_node": "exports"
+                        }
+                    },
+                    "constraint_nodal_balance": {
+                        "new_name": "price"
+                    },
+                    "node_state": {
+                        "new_name": "storage_level"
+                    },
+                    "node_slack_neg": {
+                        "new_name": "over_production"
+                    },
+                    "node_slack_pos": {
+                        "new_name": "demand_unserved"
+                    }
+                },
+                "entity_class": {
+                    "report__unit__node__direction__stochastic_scenario": {
+                        "selector": "direction",
+                        "new_name": {
+                            "to_node": "unit__to_node",
+                            "from_node": "unit__from_node"
+                        }
+                    },
+                    "report__connection__node__direction__stochastic_scenario": {
+                        "selector": "direction",
+                        "new_name": {
+                            "to_node": "connection__to_node",
+                            "from_node": "connection__from_node"
+                        }
+                    },
+                    "report__connection__node__stochastic_scenario": {
+                        "new_name": "connection__node"
+                    }
+                }
+            },
+            "spineopt_input_translation": {
+                "action": "translate",
+                "parameter": {
+                    "fix_ratio_out_in_unit_flow": {
+                        "new_name": "production_rate"
+                    },
+                    "fix_ratio_in_out_unit_flow": {
+                        "new_name": "incremental_heat_rate"
+                    },
+                    "fix_units_on_coefficient_in_out": {
+                        "new_name": "idle_heat_rate"
+                    }
+                }
+            },
+            "spineopt_output_filtering": {
+                "action": "filter",
+                "entity_class": [
+                    "direction",
+                    "stochastic_scenario",                    
+                    "report",
+                    "report__unit__node__direction__stochastic_scenario",
+                    "report__connection__node__direction__stochastic_scenario",
+                    "report__connection__node__stochastic_scenario",
+                    "report__unit__stochastic_scenario",
+                    "report__node__stochastic_scenario"
+                ]
+            },
+            "spineopt_input_filtering": {
+                "action": "filter",
+                "entity_class": [                    
+                    "stochastic_scenario",                    
+                    "stochastic_structure",
+                    "representative_period",
+                    "unit__node__node",
+                    "unit__user_constraint",
+                    "unit__from_node__user_constraint",
+                    "unit__to_node__user_constraint"
+                ],
+                "parameter": [
+                    "node_availability_factor"
+                ]
+            },            
+            "spineopt_input_ordering": {
+                "action": "order",
+                "entity_class": [                    
+                    "unit",
+                    "node",
+                    "connection",
+                    "model",
+                    "user_constraint",
+                    "commodity"                    
+                ],
+                "parameter": [
+                    "unit_capacity",
+                    "demand",
+                    "has_state",
+                    "node_state_cap",
+                    "node_state_min",
+                    "number_of_units",
+                    "minimum_operating_point",
+                    "unit_availability_factor",
+                    "min_up_time",
+                    "min_down_time",
+                    "production_rate",
+                    "incremental_heat_rate",
+                    "idle_heat_rate",
+                    "online_variable_type"
+                ]
+            },
+            "spineopt_output_ordering": {
+                "action": "order",
+                "entity_class": [                    
+                    "unit",
+                    "node",
+                    "connection"
+                ],
+                "parameter": [
+                    "storage_level",
+                    "node_injection"
+                ]
+            }
+        },
+        "use": {
+            "OutputDB": [
+                "spineopt_output_translation",
+                "spineopt_output_filtering",
+                "spineopt_output_ordering"
+            ],
+            "InputDB": [
+                "spineopt_input_translation",
+                "spineopt_input_ordering",
+                "spineopt_input_filtering"                
+            ]
+        }
+    },
+    "summary" : {
+        "output": "OutputDB",
+        "data" : {
+            "Storages invested per year" : {
+                 "select" : {
+                    "invested": ["OutputDB", "storages_invested"]
+                },
+                "from" : "node",
+                "group" : {"by" : ["year"], "do": ["sum", "invested"]}
+            },
+            "Units Invested Per Year" : {
+                 "select" : {
+                    "invested": ["OutputDB", "units_invested"]
+                },
+                "from" : "unit",
+                "group" : {"by" : ["year"], "do": ["sum", "invested"]}
+            },
+            "Capacity factors by year" : {
+                "select" : {
+                    "uaf": ["InputDB", "unit_availability_factor"],
+                    "cap": ["InputDB", "unit_capacity"],
+                    "production": ["OutputDB", "production"]
+                },
+                "from" : "unit",
+                "add_columns" : {
+                    "real_cap": ["prod", "uaf", "cap"],
+                    "cap_factor": ["div", "production", "real_cap"]
+                },
+                "group" : {"by" : ["year"], "do": ["avg", "cap_factor"]}
+            },
+            "IRR by Unit" : {
+                "select" : {
+                    "irr_percent": ["OutputDB", "irr_percent"]
+                },
+                "from" : "unit",
+                "group" : {"by" : ["none"], "do": ["sum", "irr_percent"]}
+            },
+            "Cumulative Chasflows by year" : {
+                "select" : {
+                    "cumulative_cashflow": ["OutputDB", "cumulative_cashflow"]
+                },
+                "from" : "unit",
+                "group" : {"by" : ["year"], "do": ["sum", "cumulative_cashflow"]}
+            },
+            "Renewable curtailment by year (pu)" : {
+                "select" : {
+                    "uaf": ["InputDB", "unit_availability_factor"],
+                    "cap": ["InputDB", "unit_capacity"],
+                    "production": ["OutputDB", "production"]
+                },
+                "from" : "unit",
+                "filter": "(?i)(^|_)(PV|Wind)",
+                "add_columns" : {
+                    "real_cap": ["prod", "uaf", "cap"],
+                    "curtailment": ["minus", "real_cap", "production"],
+                    "curtailment_pu": ["div", "curtailment", "real_cap"]
+                },
+                "group" : {"by" : ["year"], "do": ["avg", "curtailment_pu"]}
+            },
+            "Total production by year" : {
+                "select" : {
+                    "production": ["OutputDB", "production"]
+                },
+                "from" : "unit",
+                "group" : {"by" : ["year"], "do": ["sum", "production"]}
+            },
+            "Total consumption by year" : {
+                "select" : {
+                    "consumption": ["OutputDB", "consumption"]
+                },
+                "from" : "unit",
+                "group" : {"by" : ["year"], "do": ["sum", "consumption"]}
+            },
+            "Total capacity by year" : {
+                "select" : {
+                    "uaf": ["InputDB", "unit_availability_factor"],
+                    "cap": ["InputDB", "unit_capacity"]
+                },
+                "from" : "unit",
+                "add_columns" : {
+                    "real_cap": ["prod", "uaf", "cap"]
+                },
+                "group" : {"by" : ["year"], "do": ["sum", "real_cap"]}
+            },
+            "Total unserved energy by year" : {
+                "select" : {
+                    "demand_unserved": ["OutputDB", "demand_unserved"]
+                },
+                "from" : "node",
+                "group" : {"by" : ["year"], "do": ["sum", "demand_unserved"]}
+
+            },
+            "Storage maximum level" : {
+                "select" : {
+                    "storage_level": ["OutputDB", "storage_level"]
+                },
+                "from" : "node",
+                "group" : {"by" : ["year"], "do": ["max", "storage_level"]}
+            },
+            "Storage minimum level" : {
+                "select" : {
+                    "storage_level": ["OutputDB", "storage_level"]
+                },
+                "from" : "node",
+                "group" : {"by" : ["year"], "do": ["min", "storage_level"]}
+            },
+            "Total costs per year" : {
+                "select" : {
+                    "total_costs": ["OutputDB", "total_costs"]
+                },
+                "from" : "model",
+                "group" : {"by" : ["year"], "do": ["sum", "total_costs"]}
+            },
+            "Total demand by year" : {
+                "select" : {
+                    "demand": ["InputDB", "demand"]
+                },
+                "from" : "node",
+                "group" : {"by" : ["year"], "do": ["sum", "demand"]}
+            },
+            "Demand peak by year" : {
+                "select" : {
+                    "demand": ["InputDB", "demand"]
+                },
+                "from" : "node",
+                "group" : {"by" : ["year"], "do": ["max", "demand"]}
+            },
+            "Demand minimum (valley) by year" : {
+                "select" : {
+                    "demand": ["InputDB", "demand"]
+                },
+                "from" : "node",
+                "group" : {"by" : ["year"], "do": ["min", "demand"]}
+            }
+        }
+    }
+}

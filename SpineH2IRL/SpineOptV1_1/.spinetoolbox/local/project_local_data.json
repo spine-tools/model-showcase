@@ -1,0 +1,76 @@
+{
+    "project": {
+        "settings": {
+            "mode": "author"
+        },
+        "connections": {
+            "InputDB": {
+                "RunSpineOpt": {
+                    "filter_settings": {
+                        "known_filters": {
+                            "db_url@InputDB": {
+                                "scenario_filter": {
+                                    "AO": false,
+                                    "AltNZ": false,
+                                    "BAU": false,
+                                    "EN": false,
+                                    "FN": false,
+                                    "HN": true,
+                                    "TB": false
+                                },
+                                "alternative_filter": {
+                                    "BECCS": true,
+                                    "Base": true,
+                                    "Base__H2_Base": true,
+                                    "Base__H2_HiDemand": true,
+                                    "CCGT int": true,
+                                    "CCGT_linear_inv": true,
+                                    "EN": true,
+                                    "EmissionCap": true,
+                                    "H2Gen": true,
+                                    "H2_Base": true,
+                                    "H2_HiDemand": true,
+                                    "H2_LoDemand": true,
+                                    "H2_TB": true,
+                                    "IC_Bal": true,
+                                    "LDES": true,
+                                    "LT6": true,
+                                    "NGCCGTGen": true,
+                                    "NGGen": true,
+                                    "NoEmissionCap": true,
+                                    "ResCapUC": true,
+                                    "TransInv": true,
+                                    "no_transmission": true,
+                                    "unit_online_variable_type_linear": true,
+                                    "with_transmission": true
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "RunSpineOpt": {
+                "OutputDB": {
+                    "filter_settings": {
+                        "known_filters": {}
+                    }
+                }
+            }
+        }
+    },
+    "items": {
+        "RunSpineOpt": {},
+        "InputDB": {
+            "url": {
+                "username": "",
+                "password": ""
+            }
+        },
+        "OutputDB": {
+            "url": {
+                "username": "",
+                "password": ""
+            }
+        }
+    }
+}

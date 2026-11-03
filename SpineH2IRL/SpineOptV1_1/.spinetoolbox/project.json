@@ -1,0 +1,119 @@
+{
+    "project": {
+        "version": 13,
+        "description": "",
+        "settings": {
+            "enable_execute_all": true,
+            "store_external_paths_as_relative": false
+        },
+        "specifications": {
+            "Tool": [
+                {
+                    "type": "path",
+                    "relative": true,
+                    "path": ".spinetoolbox/specifications/Tool/runspineopt.json"
+                },
+                {
+                    "type": "path",
+                    "relative": true,
+                    "path": ".spinetoolbox/specifications/Tool/upgrade_spineopt_db.json"
+                }
+            ]
+        },
+        "connections": [
+            {
+                "name": "from InputDB to RunSpineOpt",
+                "from": [
+                    "InputDB",
+                    "right"
+                ],
+                "to": [
+                    "RunSpineOpt",
+                    "left"
+                ],
+                "filter_settings": {
+                    "auto_online": true,
+                    "enabled_filter_types": {
+                        "alternative_filter": false,
+                        "scenario_filter": true
+                    }
+                }
+            },
+            {
+                "name": "from RunSpineOpt to OutputDB",
+                "from": [
+                    "RunSpineOpt",
+                    "right"
+                ],
+                "to": [
+                    "OutputDB",
+                    "left"
+                ],
+                "filter_settings": {
+                    "auto_online": true,
+                    "enabled_filter_types": {
+                        "alternative_filter": false,
+                        "scenario_filter": true
+                    }
+                }
+            }
+        ],
+        "jumps": []
+    },
+    "items": {
+        "RunSpineOpt": {
+            "type": "Tool",
+            "description": "",
+            "x": -56.9001659132051,
+            "y": -154.98730917724959,
+            "specification": "RunSpineOpt",
+            "execute_in_work": true,
+            "cmd_line_args": [
+                {
+                    "type": "resource",
+                    "arg": "db_url@InputDB"
+                },
+                {
+                    "type": "resource",
+                    "arg": "db_url@OutputDB"
+                }
+            ],
+            "kill_completed_processes": false,
+            "log_process_output": false
+        },
+        "InputDB": {
+            "type": "Data Store",
+            "description": "",
+            "x": -240.80306909856395,
+            "y": -157.0371126789696,
+            "url": {
+                "dialect": "sqlite",
+                "host": "",
+                "port": null,
+                "database": {
+                    "type": "path",
+                    "relative": true,
+                    "path": ".spinetoolbox/items/inputdb/H2_IRL_AllScen_original_upgraded_latest.sqlite"
+                },
+                "schema": ""
+            }
+        },
+        "OutputDB": {
+            "type": "Data Store",
+            "description": "",
+            "x": 105.62593438955578,
+            "y": -154.01843737671967,
+            "url": {
+                "dialect": "sqlite",
+                "host": "",
+                "port": null,
+                "database": {
+                    "type": "path",
+                    "relative": true,
+                    "path": ".spinetoolbox/items/outputdb/Output_DB.sqlite"
+                },
+                "schema": ""
+            }
+        }
+    }
+}
